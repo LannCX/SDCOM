@@ -1,0 +1,52 @@
+AUTO_RESUME: false
+GPUS: (0,1)
+WORKERS: 8
+SAVE_FREQ: 3000
+PRINT_FREQ: 500
+SHOW_BAR: true
+IS_TRAIN: false
+USE_VAL: true
+SNAPSHOT_PREF: 'eval.fcvid.imagene.f16'
+LOG_DIR: '../output'
+OUTPUT_DIR: '../output'
+
+DATASET:
+  ROOT: '/ssd2/chenxu/dataset/fcvid'
+  ANNO_FILE: './pre_processing/fcvid/fcvid_%s_split.txt'
+  CLS_FILE: './pre_processing/fcvid/classInd.txt'
+  NAME: 'fcvid'
+  VERSION: 'all'
+  N_SEGMENT: 16
+  SCALE_SIZE: (256, 256)
+  CROP_SIZE: (224, 224)
+  TEST_SET: 'val'
+  DATA_TYPE: 'pkl'
+  IMG_FORMAT: '{:05d}.jpg'
+  SAMP_MODE: 'global'
+  RESAMPLE: true
+
+MODEL:
+  NUM_CLASSES: 239
+  NAME: TSNet
+  CHANNEL_LIST: (0, 0.25, 0.5, 0.75, 1.0)
+  FEAT_NET: 'resnet50'
+  PRETRAINED: '/afs/chenxu/weight/supernet_fcvid_f16.pth'
+  FEAT_PRETRAINED: ''
+  POLICY_PRETRAINED: ''
+
+TRAIN:
+  STAGE: 'inference'  # supernet, policy
+  PRE_FRFETCH: false
+  BATCH_SIZE: 32
+  DROP_LAST: false
+  SHUFFLE: false
+  USE_CONCAT: true
+  USE_AUX_LOSS: true
+
+TEST:
+  VAL_FREQ: 1
+  START_VAL_EPOCH: 10
+  INIT_VAL: false
+  BATCH_SIZE: 32
+  LOAD_WEIGHT: ''
+  NUM_CROPS: 1

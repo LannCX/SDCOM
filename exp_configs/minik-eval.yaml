@@ -1,0 +1,79 @@
+AUTO_RESUME: false
+GPUS: (0,)
+WORKERS: 16
+SAVE_FREQ: 5000
+PRINT_FREQ: 500
+SHOW_BAR: true
+IS_TRAIN: false
+USE_VAL: true
+SNAPSHOT_PREF: 'eval.minik.f16'
+LOG_DIR: 'output'
+OUTPUT_DIR: 'output'
+
+DATASET:
+  ROOT: './'
+  ANNO_FILE: './pre_processing/kinetics/annotations/kinetics-%s_%s.csv'
+  CLS_FILE: './pre_processing/kinetics/class_id-%s.json'
+  NAME: 'kinetics'
+  VERSION: 'mini'
+  N_SEGMENT: 16
+  SCALE_SIZE: (256, 256)
+  CROP_SIZE: (224, 224)
+  TEST_SET: 'val'
+  DATA_TYPE: 'video'
+  IMG_FORMAT: '{:05d}.jpg'
+  SAMP_MODE: 'global'
+  RESAMPLE: true
+
+MODEL:
+  NUM_CLASSES: 200
+  NAME: TSNet
+  CHANNEL_LIST: (0, 0.25, 0.5, 0.75, 1.0)
+  FEAT_NET: 'resnet50'
+  PRETRAINED: './afs/chenxu/weight/supernet_minik_f16.pth'
+  FEAT_PRETRAINED: '' 
+  POLICY_PRETRAINED: ''
+
+TRAIN:
+  STAGE: 'inference'  # supernet, policy
+  WARM_UP: true
+  WARM_UP_EPOCHS: 2
+  DROPOUT: 0.2
+  PRE_FRFETCH: false
+  BATCH_SIZE: 32
+  ACCUM_N_BS: 2
+  DROP_LAST: true
+  SHUFFLE: true
+  BEGIN_EPOCH: 1
+  USE_EMA: false
+  EMA_DECAY: 0.997
+  SMOOTHING: 0.1
+  GATE_LR: 0.1
+  POLICY_LR: 0.5
+  CLS_FC_LR: 5.0
+  USE_CONCAT: true
+  USE_AUX_LOSS: true
+  END_EPOCH: 50
+  OPTIMIZER: sgd
+  LR_SCHEDULER: multistep # plateau/multistep/cosine
+  LR: 0.01
+  WD: 1e-4
+  MOMENTUM: 0.9
+  LR_FACTOR: 0.1
+  LR_STEP:
+    - 20
+    - 40
+  RECALIBRATE_BN: false
+  MARGIN: 0.3
+  USE_META_NET: false
+  META_NUM: 500
+  META_LR: 1e-3
+  META_WD: 1e-4
+
+TEST:
+  VAL_FREQ: 1
+  START_VAL_EPOCH: 1
+  INIT_VAL: false
+  BATCH_SIZE: 16
+  LOAD_WEIGHT: './afs/chenxu/weight/tslim-net_minik_f16.pth'
+  NUM_CROPS: 1

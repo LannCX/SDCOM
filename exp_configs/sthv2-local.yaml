@@ -1,0 +1,68 @@
+AUTO_RESUME: false
+GPUS: (4,5)
+WORKERS: 16
+SAVE_FREQ: 5000
+PRINT_FREQ: 500
+SHOW_BAR: false
+IS_TRAIN: true
+USE_VAL: true
+SNAPSHOT_PREF: 'sthv2.imagenet.policy.f12'
+LOG_DIR: '../output'
+OUTPUT_DIR: '../output'
+
+DATASET:
+  ROOT: '/ssd3/xiaohan/STH_pil/'
+  ANNO_FILE: './pre_processing/something/v2/%s-%s.json'
+  CLS_FILE: './pre_processing/something/v2/%s-labels.json'
+  NAME: 'somethingv2'
+  VERSION: 'v2'
+  N_SEGMENT: 8
+  SCALE_SIZE: (256, 256)
+  CROP_SIZE: (224, 224)
+  TEST_SET: 'validation'
+  DATA_TYPE: 'pkl'
+  IMG_FORMAT: '{:05d}.jpg'
+  SAMP_MODE: 'global'
+  RESAMPLE: false
+
+MODEL:
+  NUM_CLASSES: 174
+  NAME: TSNet
+  CHANNEL_LIST: (0, 0.25, 0.5, 0.75, 1.0)
+  FEAT_NET: 'tsm-resnet50'
+  PRETRAINED: ''
+  FEAT_PRETRAINED: '/ssd2/chenxu/weights/resnet50-imagenet.pth' 
+  POLICY_PRETRAINED: '/ssd2/chenxu/weights/mobilenet_v2-b0353104.pth'
+
+TRAIN:
+  STAGE: 'policy'  # supernet, policy
+  WARM_UP: true
+  WARM_UP_EPOCHS: 2
+  PRE_FRFETCH: true
+  DROPOUT: 0.5
+  BATCH_SIZE: 16
+  DROP_LAST: true
+  SHUFFLE: true
+  BEGIN_EPOCH: 1
+  USE_EMA: true
+  EMA_DECAY: 0.997
+  SMOOTHING: 0.1
+  LR_FACTOR: 1.
+  END_EPOCH: 50
+  OPTIMIZER: sgd
+  LR_SCHEDULER: multistep # plateau/multistep/cosine
+  LR: 0.01
+  WD: 5e-4
+  MOMENTUM: 0.9
+  LR_FACTOR: 0.1
+  LR_STEP:
+    - 20
+    - 40
+
+TEST:
+  VAL_FREQ: 1
+  START_VAL_EPOCH: 1
+  INIT_VAL: false
+  BATCH_SIZE: 16
+  LOAD_WEIGHT: ''
+  NUM_CROPS: 1

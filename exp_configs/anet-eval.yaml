@@ -1,0 +1,52 @@
+AUTO_RESUME: false
+GPUS: (0,1)
+WORKERS: 8
+SAVE_FREQ: 2000
+PRINT_FREQ: 100
+SHOW_BAR: true
+IS_TRAIN: false
+USE_VAL: true
+SNAPSHOT_PREF: 'eval.anet.imagenet.f16'
+LOG_DIR: 'output'
+OUTPUT_DIR: 'output'
+
+DATASET:
+  ROOT: '/ssd2/chenxu/dataset/anet' #'./data02/xiaohan/activitynet_pil' #
+  ANNO_FILE: './pre_processing/anet/anet_%s_split.txt'
+  CLS_FILE: './pre_processing/anet/classInd.txt'
+  NAME: 'anet'
+  VERSION: 'all'
+  N_SEGMENT: 16
+  SCALE_SIZE: (256, 256)
+  CROP_SIZE: (224, 224)
+  TEST_SET: 'val'
+  DATA_TYPE: 'pkl'
+  IMG_FORMAT: '{:05d}.jpg'
+  SAMP_MODE: 'global'
+  RESAMPLE: true
+
+MODEL:
+  NUM_CLASSES: 200
+  NAME: TSNet
+  CHANNEL_LIST: (0, 0.25, 0.5, 0.75, 1.0)
+  FEAT_NET: 'resnet50'
+  PRETRAINED: ''
+  FEAT_PRETRAINED: '' 
+  POLICY_PRETRAINED: '' 
+
+TRAIN:
+  STAGE: 'inference'  # supernet, policy, inference
+  PRE_FRFETCH: true
+  BATCH_SIZE: 32
+  DROP_LAST: false
+  SHUFFLE: false
+  USE_CONCAT: true
+  USE_AUX_LOSS: true
+
+TEST:
+  VAL_FREQ: 1
+  START_VAL_EPOCH: 1
+  INIT_VAL: false
+  BATCH_SIZE: 16
+  LOAD_WEIGHT: '/afs/chenxu/weight/tslimnet_anet_f16.pth'
+  NUM_CROPS: 1

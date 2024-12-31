@@ -1,0 +1,72 @@
+AUTO_RESUME: false
+GPUS: (0,1)
+WORKERS: 32
+SAVE_FREQ: 3000
+PRINT_FREQ: 500
+SHOW_BAR: false
+IS_TRAIN: true
+USE_VAL: true
+SNAPSHOT_PREF: 'fcvid.imagenet.policy.f16.resample'
+LOG_DIR: 'output'
+OUTPUT_DIR: 'output'
+
+DATASET:
+  ROOT: './afs/chenxu/dataset/fcvid'
+  ANNO_FILE: './pre_processing/fcvid/fcvid_%s_split.txt'
+  CLS_FILE: './pre_processing/fcvid/classInd.txt'
+  NAME: 'fcvid'
+  VERSION: 'all'
+  N_SEGMENT: 16
+  SCALE_SIZE: (256, 256)
+  CROP_SIZE: (224, 224)
+  TEST_SET: 'val'
+  DATA_TYPE: 'pkl'
+  IMG_FORMAT: '{:05d}.jpg'
+  SAMP_MODE: 'global'
+  RESAMPLE: true
+
+MODEL:
+  NUM_CLASSES: 239
+  NAME: TSNet
+  CHANNEL_LIST: (0, 0.25, 0.5, 0.75, 1.0)
+  FEAT_NET: 'resnet50'
+  PRETRAINED: './afs/chenxu/weight/supernet_fcvid_f16.pth'
+  FEAT_PRETRAINED: ''
+  POLICY_PRETRAINED: ''
+
+TRAIN:
+  STAGE: 'policy'  # supernet, policy
+  WARM_UP: true
+  WARM_UP_EPOCHS: 2
+  PRE_FRFETCH: false
+  BATCH_SIZE: 32
+  DROP_LAST: true
+  SHUFFLE: true
+  BEGIN_EPOCH: 1
+  USE_EMA: true
+  EMA_DECAY: 0.997
+  SMOOTHING: 0.1
+  RECALIBRATE_BN: false
+  GATE_LR: 0.1
+  POLICY_LR: 0.5
+  CLS_FC_LR: 5.0
+  USE_CONCAT: true
+  USE_AUX_LOSS: true
+  END_EPOCH: 50
+  OPTIMIZER: sgd
+  LR_SCHEDULER: multistep # plateau/multistep/cosine
+  LR: 0.02
+  WD: 1e-4
+  MOMENTUM: 0.9
+  LR_FACTOR: 0.1
+  LR_STEP:
+    - 20
+    - 40
+
+TEST:
+  VAL_FREQ: 5
+  START_VAL_EPOCH: 10
+  INIT_VAL: false
+  BATCH_SIZE: 32
+  LOAD_WEIGHT: ''
+  NUM_CROPS: 1
